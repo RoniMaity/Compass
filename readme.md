@@ -36,7 +36,7 @@ Do not rename files. Work inside the TODOs.
 ### TODO (1) — Permission + initial position + heading watcher
 In `CompassScreen.js`:
 - Ask for foreground **Location** permission.
-- Read one-time position and store `{ latitude, longitude }` in state.
+- Read one-time position and store `  { latitude, longitude }` in state.
 - Load saved pins using the provided storage helper.
 
 **APIs to use** (search docs if needed):  
