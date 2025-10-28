@@ -8,6 +8,7 @@ export async function loadPins() {
     const data = await AsyncStorage.getItem(KEY)
     // console.log("data at storage", data)
     if (!data) return [];
+    // console.log("Hello  ",JSON.parse(data))
     return JSON.parse(data)
   } catch (e) {
     console.log(e);
@@ -17,9 +18,10 @@ export async function loadPins() {
 
 // TODO: Save the pins locally
 export async function savePins(pins) {
-  console.log(pins)
+  // console.log(pins)
   try {
     await AsyncStorage.setItem(KEY, JSON.stringify(pins))
-  } catch { e }
-  console.log(e)
+  } catch (e) {
+    console.log(e)
+  }
 }

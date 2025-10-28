@@ -62,7 +62,7 @@ export default function CompassScreen({ navigation }) {
       // TODO c) Load saved pins
       const saved = await loadPins();
       // console.log("Saved", saved)
-      if (mounted) setPins((prev) => [...prev, saved]);
+      if (mounted) setPins(saved);
     };
 
     askForPermission();
@@ -118,18 +118,24 @@ export default function CompassScreen({ navigation }) {
       setSnack("No GPS fix yet");
       return;
     }
-    // console.log("Hello", heading)
-    const newPin = {
-      id: Date.now(),
-      lat: coords.latitude,
-      lon: coords.longitude,
-      heading,
-      ts: nowISO()
+    try {
+
+      const newPin = {
+        id: Date.now(),
+        lat: coords.latitude,
+        lon: coords.longitude,
+        heading,
+        ts: nowISO()
+      }
+      // TODO(2): push new pin {id, lat, lon, heading, ts} to state and savePins(next)
+
+      setPins([newPin, ...pins])
+      await savePins([newPin, ...pins])
+      setSnack("saved pin");
+      
+    } catch (err) {
+      console.log(err)
     }
-    // TODO(2): push new pin {id, lat, lon, heading, ts} to state and savePins(next)
-    setPins((prev) => [...prev, newPin])
-    savePins(newPin)
-    setSnack("TODO: save pin");
   };
 
   const copyCoords = async () => {
@@ -151,8 +157,8 @@ export default function CompassScreen({ navigation }) {
     // TODO(4): Share.share with message including coords + heading + cardinal
     const message = `My current Location: ${coords.latitude}, ${coords.longitude} (${toCardinal(heading)} ${heading}°)`;
 
-    console.log(message);
-    await Share.share({message:message});
+    // console.log(message);
+    await Share.share({ message: message });
     // setSnack(message);
     // console.log("Shared msg", message)
 

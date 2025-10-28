@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Share } from "react-native";
 import { Card, List, IconButton, Text, Snackbar } from "react-native-paper";
+import { toCardinal } from "../utils/geo";
 import { loadPins, savePins } from "../storage";
 
 export default function PinsScreen() {
@@ -8,17 +9,35 @@ export default function PinsScreen() {
   const [snack, setSnack] = useState("");
 
   useEffect(() => {
+
+    async function lp() {
+
+      const pin = await loadPins();
+      setPins(pin);
+      // console.log(pin)
+    }
     // TODO(5): Load saved pins into state on mount
+    lp()
   }, []);
 
   const remove = async (id) => {
     // TODO(6): Delete pin by id and persist via savePins(next)
-    setSnack("TODO: delete pin");
+    const newPins = pins.filter((pin) => pin.id !== id);
+    setPins(newPins);
+    await savePins(newPins);
+    setSnack("pin deleted");
   };
 
   const sharePin = async (p) => {
     // TODO(7): Share pin location nicely (include timestamp if you like)
-    setSnack("TODO: share pin");
+    try {
+      // console.log('share pin is callend inside shared ')
+      // console.log("Sharing...", p);
+      await Share.share({ message: `Shared Location: ${p.lat}, ${p.lon} (${toCardinal(p.heading)} ${p.heading}°)` });
+      setSnack("share pin");
+    } catch (err) {
+      console.log(err)
+    }
   };
 
   return (
@@ -42,7 +61,10 @@ export default function PinsScreen() {
                     >
                       <IconButton
                         icon="share-variant"
-                        onPress={() => sharePin(p)}
+                        onPress={() => {
+                          console.log("shared clicked inside saved")
+                          sharePin(p)
+                        }}
                       />
                       <IconButton icon="delete" onPress={() => remove(p.id)} />
                     </View>
